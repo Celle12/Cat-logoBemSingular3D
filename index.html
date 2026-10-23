@@ -213,7 +213,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const WHATSAPP_NUMBER = "5599999999999"; // Altere para o seu número com DDI e DDD
+        const WHATSAPP_NUMBER = "5588981386370";
 
         let products = [];
         let currentCategory = 'todos';
@@ -388,8 +388,8 @@
         }
 
         window.sendCustomWhatsApp = function() {
-            const message = encodeURIComponent(`Olá! Vim pelo catálogo da B&M Singular e gostaria de tirar dúvidas ou fazer um orçamento personalizado.`);
-            window.open(`https://wa.me/${5588981386370}?text=${Olá, Suzy! Gostaria de uma encomenda/orçamento da Bem Singular.}`, '_blank');
+            const message = encodeURIComponent('Olá, Suzy! Gostaria de uma encomenda/orçamento da Bem Singular.');
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
         window.orderFromModal = function() {
