@@ -60,7 +60,6 @@
                         class="w-full pl-10 pr-4 py-2 bg-brand-bg/60 border border-brand-accent/50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark placeholder-brand-primary/50 transition">
                 </div>
                 
-                <!-- NOVO BOTÃO DE WHATSAPP NO TOPO -->
                 <button onclick="sendCustomWhatsApp()" class="bg-brand-primary hover:bg-brand-dark text-white px-4 py-2 rounded-full text-sm font-medium transition flex items-center gap-2 shadow-sm whitespace-nowrap">
                     <i class="fa-brands fa-whatsapp text-lg"></i> <span class="hidden md:inline">Contato</span>
                 </button>
@@ -97,7 +96,7 @@
 
         <!-- Grade de Produtos Dinâmica -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12" id="productGrid">
-            <!-- Produtos do Firebase -->
+            <!-- Produtos virão do Firebase -->
         </div>
 
         <!-- Mensagem de Carregamento ou Vazio -->
@@ -214,10 +213,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ==========================================
-        // CONFIGURAÇÃO DO WHATSAPP DA LOJA
-        // ==========================================
-        const WHATSAPP_NUMBER = "5599999999999"; // Substitua pelo seu DDD e número (ex: 5511999999999)
+        // Lembre-se de colocar o seu número correto do WhatsApp aqui (com DDI e DDD, ex: 5511999999999)
+        const WHATSAPP_NUMBER = "5599999999999";
 
         let products = [];
         let currentCategory = 'todos';
@@ -229,14 +226,16 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "products"));
                 products = [];
-                querySnapshot.forEach((doc) => {
-                    products.push({ id: doc.id, ...doc.data() });
+                querySnapshot.forEach((docSnap) => {
+                    products.push({ id: docSnap.id, ...docSnap.data() });
                 });
-                loadingState.classList.add('hidden');
+                if (loadingState) loadingState.classList.add('hidden');
                 renderProducts();
             } catch (error) {
                 console.error("Erro ao carregar produtos: ", error);
-                loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar produtos.</p>`;
+                if (loadingState) {
+                    loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar produtos do banco de dados.</p>`;
+                }
             }
         }
 
@@ -247,6 +246,7 @@
         window.renderProducts = function() {
             const grid = document.getElementById('productGrid');
             const noResults = document.getElementById('noResults');
+            if (!grid) return;
             
             const filtered = products.filter(p => {
                 const matchesCategory = currentCategory === 'todos' || p.category === currentCategory;
@@ -316,7 +316,7 @@
             currentCategory = category;
             document.querySelectorAll('.category-btn').forEach(btn => {
                 if (btn.getAttribute('data-category') === category) {
-                    btn.className = "category-btn px-5 py2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-primary text-white shadow-sm";
+                    btn.className = "category-btn px-5 py-2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-primary text-white shadow-sm";
                 } else {
                     btn.className = "category-btn px-5 py-2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-card text-brand-primary border border-brand-accent/50 hover:border-brand-primary";
                 }
@@ -379,16 +379,14 @@
             }, 300);
         }
 
-        // Mensagem padrão ao clicar para encomendar um produto específico
         window.sendWhatsAppDirect = function(productName, pricePix) {
             const message = encodeURIComponent(`Olá! Gostaria de encomendar a peça *${productName}* (${formatMoney(pricePix)} no pix) vista no catálogo da B&M Singular.`);
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
-        // Mensagem padrão geral (botão do topo e banner personalizado)
         window.sendCustomWhatsApp = function() {
             const message = encodeURIComponent(`Olá! Vim pelo catálogo da B&M Singular e gostaria de tirar dúvidas ou fazer um orçamento personalizado.`);
-            window.open(`https://wa.me/${5588981386370}?text=${Olá Suzy! Gostaria de fazer uma encomenda/orçamento na BemSingular.}`, '_blank');
+            window.open(`https://wa.me/${5588981386370}?text=${Olá, Suzy! Gostaria de um orçamento/encomenda da Bem Singular.}`, '_blank');
         }
 
         window.orderFromModal = function() {
@@ -404,10 +402,13 @@
             }
         }
 
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            currentSearch = e.target.value.toLowerCase();
-            renderProducts();
-        });
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                renderProducts();
+            });
+        }
 
         loadProductsFromFirebase();
     </script>
