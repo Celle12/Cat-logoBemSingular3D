@@ -50,12 +50,20 @@
                 </div>
             </div>
 
-            <div class="w-full sm:w-72 relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-primary/60">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                </span>
-                <input type="text" id="searchInput" placeholder="Buscar peças ou decorações..." 
-                    class="w-full pl-10 pr-4 py-2 bg-brand-bg/60 border border-brand-accent/50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark placeholder-brand-primary/50 transition">
+            <!-- Barra de Pesquisa e Botão do WhatsApp no Topo -->
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <div class="w-full sm:w-64 relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-brand-primary/60">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Buscar peças..." 
+                        class="w-full pl-10 pr-4 py-2 bg-brand-bg/60 border border-brand-accent/50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark placeholder-brand-primary/50 transition">
+                </div>
+                
+                <!-- NOVO BOTÃO DE WHATSAPP NO TOPO -->
+                <button onclick="sendCustomWhatsApp()" class="bg-brand-primary hover:bg-brand-dark text-white px-4 py-2 rounded-full text-sm font-medium transition flex items-center gap-2 shadow-sm whitespace-nowrap">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> <span class="hidden md:inline">Contato</span>
+                </button>
             </div>
         </div>
     </header>
@@ -89,7 +97,7 @@
 
         <!-- Grade de Produtos Dinâmica -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12" id="productGrid">
-            <!-- Inicialmente vazio. Os produtos virão do Firebase em tempo real -->
+            <!-- Produtos do Firebase -->
         </div>
 
         <!-- Mensagem de Carregamento ou Vazio -->
@@ -189,34 +197,33 @@
         </div>
     </footer>
 
-    <!-- FIREBASE E SCRIPTS DE CONEXÃO -->
+    <!-- FIREBASE E SCRIPTS -->
     <script type="module">
-        // Importar o Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO SEU FIREBASE
         const firebaseConfig = {
-  apiKey: "AIzaSyCOOrAOd6G06-FYYRa2rYgvnnBldm0cK8Y",
-  authDomain: "catalogobemsingular.firebaseapp.com",
-  projectId: "catalogobemsingular",
-  storageBucket: "catalogobemsingular.firebasestorage.app",
-  messagingSenderId: "530499479409",
-  appId: "1:530499479409:web:93bda5df7d87a3eac4b8d0"
-};
+            apiKey: "AIzaSyCOOrAOd6G06-FYYRa2rYgvnnBldm0cK8Y",
+            authDomain: "catalogobemsingular.firebaseapp.com",
+            projectId: "catalogobemsingular",
+            storageBucket: "catalogobemsingular.firebasestorage.app",
+            messagingSenderId: "530499479409",
+            appId: "1:530499479409:web:93bda5df7d87a3eac4b8d0"
+        };
 
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const WHATSAPP_NUMBER = "5500999999999"; // Coloque o número da loja com DDD
+        // ==========================================
+        // CONFIGURAÇÃO DO WHATSAPP DA LOJA
+        // ==========================================
+        const WHATSAPP_NUMBER = "5599999999999"; // Substitua pelo seu DDD e número (ex: 5511999999999)
 
         let products = [];
         let currentCategory = 'todos';
         let currentSearch = '';
         let selectedProductForModal = null;
 
-        // Buscar produtos do Firestore ao carregar a página
         async function loadProductsFromFirebase() {
             const loadingState = document.getElementById('loadingState');
             try {
@@ -229,7 +236,7 @@
                 renderProducts();
             } catch (error) {
                 console.error("Erro ao carregar produtos: ", error);
-                loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar produtos. Verifique a configuração do Firebase.</p>`;
+                loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar produtos.</p>`;
             }
         }
 
@@ -307,15 +314,13 @@
 
         window.filterCategory = function(category) {
             currentCategory = category;
-            
             document.querySelectorAll('.category-btn').forEach(btn => {
                 if (btn.getAttribute('data-category') === category) {
-                    btn.className = "category-btn px-5 py-2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-primary text-white shadow-sm";
+                    btn.className = "category-btn px-5 py2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-primary text-white shadow-sm";
                 } else {
                     btn.className = "category-btn px-5 py-2 rounded-full text-sm font-medium transition whitespace-nowrap bg-brand-card text-brand-primary border border-brand-accent/50 hover:border-brand-primary";
                 }
             });
-
             renderProducts();
         }
 
@@ -357,7 +362,6 @@
 
             const modal = document.getElementById('productModal');
             const modalContent = document.getElementById('modalContent');
-            
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -368,7 +372,6 @@
         window.closeModal = function() {
             const modal = document.getElementById('productModal');
             const modalContent = document.getElementById('modalContent');
-            
             modal.classList.add('opacity-0');
             modalContent.classList.add('scale-95');
             setTimeout(() => {
@@ -376,14 +379,16 @@
             }, 300);
         }
 
+        // Mensagem padrão ao clicar para encomendar um produto específico
         window.sendWhatsAppDirect = function(productName, pricePix) {
             const message = encodeURIComponent(`Olá! Gostaria de encomendar a peça *${productName}* (${formatMoney(pricePix)} no pix) vista no catálogo da B&M Singular.`);
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
+        // Mensagem padrão geral (botão do topo e banner personalizado)
         window.sendCustomWhatsApp = function() {
-            const message = encodeURIComponent(`Olá! Não encontrei o que queria no catálogo e gostaria de fazer um pedido personalizado / orçamento sob medida na B&M Singular.`);
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+            const message = encodeURIComponent(`Olá! Vim pelo catálogo da B&M Singular e gostaria de tirar dúvidas ou fazer um orçamento personalizado.`);
+            window.open(`https://wa.me/${5588981386370}?text=${Olá Suzy! Gostaria de fazer uma encomenda/orçamento na BemSingular.}`, '_blank');
         }
 
         window.orderFromModal = function() {
@@ -404,7 +409,6 @@
             renderProducts();
         });
 
-        // Executar carregamento inicial
         loadProductsFromFirebase();
     </script>
 </body>
