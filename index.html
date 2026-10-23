@@ -104,7 +104,7 @@
             <div class="text-brand-primary text-3xl mb-3 animate-spin">
                 <i class="fa-solid fa-spinner"></i>
             </div>
-            <p class="text-brand-primary text-sm font-medium">Carregando catálogo...</p>
+            <p class="text-brand-primary text-sm font-medium">A carregar catálogo...</p>
         </div>
 
         <div id="noResults" class="hidden text-center py-16">
@@ -112,7 +112,7 @@
                 <i class="fa-regular fa-face-grimace"></i>
             </div>
             <h3 class="font-serif text-xl font-bold text-brand-dark">Nenhum produto cadastrado ou encontrado</h3>
-            <p class="text-brand-primary text-sm mt-1">Acesse o painel administrativo para cadastrar suas primeiras peças!</p>
+            <p class="text-brand-primary text-sm mt-1">Acesse o painel administrativo para cadastrar as suas primeiras peças!</p>
         </div>
 
         <!-- Banner de Orçamento Personalizado -->
@@ -123,7 +123,7 @@
                 </div>
                 <h3 class="font-serif text-2xl font-bold text-brand-dark mb-2">Não achou o que queria?</h3>
                 <p class="text-brand-primary text-sm sm:text-base mb-6 leading-relaxed">
-                    Tem um arquivo STL específico, uma ideia personalizada ou precisa de um projeto sob medida? Entre em contato pelo WhatsApp para fazer seu pedido!
+                    Tem um ficheiro STL específico, uma ideia personalizada ou precisa de um projeto sob medida? Entre em contato pelo WhatsApp para fazer seu pedido!
                 </p>
                 <button onclick="sendCustomWhatsApp()" class="inline-flex items-center gap-2 bg-brand-primary hover:bg-brand-dark text-white px-8 py-3.5 rounded-xl font-medium transition shadow-sm text-base">
                     <i class="fa-brands fa-whatsapp text-xl"></i> Fazer pedido personalizado no WhatsApp
@@ -213,8 +213,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Lembre-se de colocar o seu número correto do WhatsApp aqui (com DDI e DDD, ex: 5511999999999)
-        const WHATSAPP_NUMBER = "5599999999999";
+        const WHATSAPP_NUMBER = "5599999999999"; // Altere para o seu número com DDI e DDD
 
         let products = [];
         let currentCategory = 'todos';
@@ -229,12 +228,13 @@
                 querySnapshot.forEach((docSnap) => {
                     products.push({ id: docSnap.id, ...docSnap.data() });
                 });
+                
                 if (loadingState) loadingState.classList.add('hidden');
                 renderProducts();
             } catch (error) {
                 console.error("Erro ao carregar produtos: ", error);
                 if (loadingState) {
-                    loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar produtos do banco de dados.</p>`;
+                    loadingState.innerHTML = `<p class="text-brand-primary text-sm">Erro ao carregar os produtos do banco de dados.</p>`;
                 }
             }
         }
@@ -246,6 +246,9 @@
         window.renderProducts = function() {
             const grid = document.getElementById('productGrid');
             const noResults = document.getElementById('noResults');
+            const loadingState = document.getElementById('loadingState');
+            
+            if (loadingState) loadingState.classList.add('hidden');
             if (!grid) return;
             
             const filtered = products.filter(p => {
@@ -386,7 +389,7 @@
 
         window.sendCustomWhatsApp = function() {
             const message = encodeURIComponent(`Olá! Vim pelo catálogo da B&M Singular e gostaria de tirar dúvidas ou fazer um orçamento personalizado.`);
-            window.open(`https://wa.me/${5588981386370}?text=${Olá, Suzy! Gostaria de um orçamento/encomenda da Bem Singular.}`, '_blank');
+            window.open(`https://wa.me/${5588981386370}?text=${Olá, Suzy! Gostaria de uma encomenda/orçamento da Bem Singular.}`, '_blank');
         }
 
         window.orderFromModal = function() {
