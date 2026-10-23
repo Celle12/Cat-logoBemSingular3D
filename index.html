@@ -140,7 +140,7 @@
                 <h3 id="modalTitle" class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark mb-4">Nome do Produto</h3>
                 
                 <div class="relative h-72 sm:h-80 bg-brand-light rounded-2xl overflow-hidden mb-4 shadow-inner">
-                    <img id="modalMainImg" src="" alt="Produto" class="w-full h-full object-cover">
+                    <img id="modalMainImg" src="" alt="Produto" class="w-full h-full object-contain">
                 </div>
 
                 <div id="thumbnailsWrapper" class="mb-6 hidden">
@@ -195,7 +195,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO SEU FIREBASE (Substitua pelas suas chaves quando criar o projeto)
+        // CONFIGURAÇÃO DO SEU FIREBASE
         const firebaseConfig = {
   apiKey: "AIzaSyCOOrAOd6G06-FYYRa2rYgvnnBldm0cK8Y",
   authDomain: "catalogobemsingular.firebaseapp.com",
@@ -264,7 +264,7 @@
 
                 card.innerHTML = `
                     <div class="relative h-52 bg-brand-light overflow-hidden cursor-pointer" onclick="openModal('${p.id}')">
-                        <img src="${mainImage}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <img src="${mainImage}" alt="${p.name}" class="w-full h-full object-contain group-hover:scale-105 transition duration-500">
                         <span class="absolute top-3 left-3 bg-brand-card/90 backdrop-blur-sm text-brand-primary text-xs uppercase tracking-wider px-3 py-1 rounded-full font-medium shadow-sm">
                             ${p.category}
                         </span>
@@ -343,7 +343,7 @@
                 product.images.forEach((imgUrl, index) => {
                     const thumb = document.createElement('div');
                     thumb.className = `w-16 h-16 rounded-xl overflow-hidden cursor-pointer border-2 transition flex-shrink-0 ${index === 0 ? 'border-brand-primary' : 'border-brand-accent/40 opacity-70 hover:opacity-100'}`;
-                    thumb.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+                    thumb.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-contain bg-brand-light">`;
                     thumb.onclick = () => {
                         document.getElementById('modalMainImg').src = imgUrl;
                         Array.from(thumbContainer.children).forEach(t => t.className = "w-16 h-16 rounded-xl overflow-hidden cursor-pointer border-2 border-brand-accent/40 opacity-70 hover:opacity-100 flex-shrink-0");
