@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - B&M Singular</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#F9F6F0',
+                            card: '#FFFFFF',
+                            primary: '#8C7A6B',
+                            dark: '#54473D',
+                            accent: '#D4C5B9',
+                            light: '#EFECE6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-bg text-brand-dark font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- TELA DE LOGIN -->
+    <div id="loginScreen" class="fixed inset-0 bg-brand-bg z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-brand-accent/40 rounded-2xl max-w-md w-full p-8 shadow-xl text-center">
+            <div class="w-14 h-14 rounded-full bg-brand-accent/40 border border-brand-primary/30 flex items-center justify-center mx-auto mb-4">
+                <span class="font-serif font-bold text-brand-dark text-xl">B&M</span>
+            </div>
+            <h2 class="font-serif text-2xl font-bold text-brand-dark mb-2">Painel Restrito</h2>
+            <p class="text-brand-primary text-sm mb-6">Digite sua senha de acesso para gerenciar o catálogo.</p>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="password" id="adminPassword" placeholder="Senha de acesso" required
+                    class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark placeholder-brand-primary/50 text-center tracking-widest">
+                <button type="submit" class="w-full bg-brand-primary hover:bg-brand-dark text-white py-3 rounded-xl font-medium transition shadow-sm">
+                    Entrar no Painel
+                </button>
+            </form>
+            <p id="loginError" class="text-red-500 text-xs mt-3 hidden">Senha incorreta. Tente novamente.</p>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO DO PAINEL -->
+    <header class="bg-brand-card border-b border-brand-accent/30 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-brand-accent/40 border border-brand-primary/30 flex items-center justify-center overflow-hidden">
+                    <span class="font-serif font-bold text-brand-dark text-sm">B&M</span>
+                </div>
+                <div>
+                    <h1 class="font-serif text-lg font-bold text-brand-dark">Painel Admin</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-brand-primary font-medium">B&M Singular</p>
+                </div>
+            </div>
+            <a href="index.html" target="_blank" class="text-xs bg-brand-bg border border-brand-accent/50 text-brand-dark px-4 py-2 rounded-xl hover:bg-brand-accent/30 transition flex items-center gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Catálogo
+            </a>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (FORMULÁRIO DE CADASTRO) -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <div class="bg-brand-card border border-brand-accent/40 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="mb-6 pb-4 border-b border-brand-accent/20">
+                <h2 class="font-serif text-2xl font-bold text-brand-dark">Cadastrar Novo Produto</h2>
+                <p class="text-brand-primary text-sm">Preencha as informações abaixo para adicionar a peça ao catálogo online.</p>
+            </div>
+
+            <form id="productForm" onsubmit="saveProduct(event)" class="space-y-6">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Nome do Produto -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Nome da Peça</label>
+                        <input type="text" id="prodName" required placeholder="Ex: Vaso Geométrico Minimalista"
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                    </div>
+
+                    <!-- Categoria -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Categoria</label>
+                        <select id="prodCategory" required
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                            <option value="decoracao">Decoração</option>
+                            <option value="utilitarios">Utilitários</option>
+                            <option value="personalizados">Personalizados</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Preço Pix -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Preço no Pix (R$)</label>
+                        <input type="number" step="0.01" id="prodPricePix" required placeholder="45.00"
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                    </div>
+
+                    <!-- Preço Cartão -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Preço no Cartão (R$)</label>
+                        <input type="number" step="0.01" id="prodPriceCard" required placeholder="49.90"
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Descrição da Peça</label>
+                    <textarea id="prodDesc" rows="3" required placeholder="Descreva os detalhes da peça..."
+                        class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Tamanho / Medidas -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Tamanho e Dimensões</label>
+                        <input type="text" id="prodSize" placeholder="Ex: Altura: 14cm | Diâmetro: 12cm"
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                    </div>
+
+                    <!-- Cuidados / Orientações -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Orientações e Cuidados</label>
+                        <input type="text" id="prodCare" placeholder="Ex: Limpar apenas com pano levemente umedecido"
+                            class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark">
+                    </div>
+                </div>
+
+                <!-- Links das Imagens -->
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-brand-primary font-semibold mb-2">Links das Imagens (URLs separadas por vírgula)</label>
+                    <textarea id="prodImages" rows="2" required placeholder="https://exemplo.com/foto1.jpg, https://exemplo.com/foto2.jpg"
+                        class="w-full px-4 py-3 bg-brand-bg/60 border border-brand-accent/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/50 text-brand-dark"></textarea>
+                    <p class="text-[11px] text-brand-primary/80 mt-1">Dica: Você pode hospedar as fotos no ImgBB, GitHub ou usar links diretos de imagens.</p>
+                </div>
+
+                <!-- Botão de Envio -->
+                <button type="submit" id="submitBtn" class="w-full bg-brand-primary hover:bg-brand-dark text-white py-4 rounded-xl font-medium transition shadow-sm text-base flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Cadastrar Produto no Catálogo
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="bg-brand-card border-t border-brand-accent/30 mt-16 py-6 text-center text-xs text-brand-primary">
+        <p class="font-serif font-bold text-brand-dark">B&M Singular - Painel Administrativo</p>
+        <p>© 2026 - Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- FIREBASE E SCRIPT DO ADMIN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIGURAÇÃO DO SEU FIREBASE (Mesma chave usada no catalogo.html)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // SENHA DO PAINEL ADMIN (Defina sua senha aqui)
+        const ADMIN_PASSWORD = "123";
+
+        window.handleLogin = function(event) {
+            event.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            const errorText = document.getElementById('loginError');
+
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').classList.add('hidden');
+            } else {
+                errorText.classList.remove('hidden');
+            }
+        }
+
+        window.saveProduct = async function(event) {
+            event.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Cadastrando...`;
+
+            // Tratar as imagens (separar por vírgula em formato de lista)
+            const rawImages = document.getElementById('prodImages').value;
+            const imagesArray = rawImages.split(',').map(img => img.trim()).filter(img => img.length > 0);
+
+            const productData = {
+                name: document.getElementById('prodName').value,
+                category: document.getElementById('prodCategory').value,
+                pricePix: parseFloat(document.getElementById('prodPricePix').value),
+                priceCard: parseFloat(document.getElementById('prodPriceCard').value),
+                desc: document.getElementById('prodDesc').value,
+                size: document.getElementById('prodSize').value,
+                care: document.getElementById('prodCare').value,
+                images: imagesArray,
+                createdAt: new Date()
+            };
+
+            try {
+                await addDoc(collection(db, "products"), productData);
+                alert("Produto cadastrado com sucesso! Já está visível no seu catálogo.");
+                document.getElementById('productForm').reset();
+            } catch (error) {
+                console.error("Erro ao salvar produto: ", error);
+                alert("Erro ao cadastrar produto. Verifique o console ou a configuração do Firebase.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Cadastrar Produto no Catálogo`;
+            }
+        }
+    </script>
+</body>
+</html>
